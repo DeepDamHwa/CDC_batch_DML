@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@119.192.172.145:61004:XE
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: c##deep
+    password: qwer1234
