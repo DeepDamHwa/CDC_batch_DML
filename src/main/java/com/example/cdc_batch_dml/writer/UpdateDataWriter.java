@@ -7,22 +7,23 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+
 @Component
 @RequiredArgsConstructor
-public class InsertDataWriter implements ItemWriter<Interaction> {
+public class UpdateDataWriter implements ItemWriter<Interaction> {
 
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void write(Chunk<? extends Interaction> items) throws Exception {
-        String sql = "INSERT INTO interaction (idx, comment_idx, emoji_idx, user_idx) VALUES (NULL, ?, ?, ?)";
+        String sql = "UPDATE INTERACTION SET COMMENT_IDX = ?, EMOJI_IDX = ?, USER_IDX = ? WHERE IDX = ?";
 
         for (Interaction interaction : items) {
             jdbcTemplate.update(sql,
                     interaction.getCommentIdx(),
                     interaction.getEmojiIdx(),
-                    interaction.getUserIdx());
+                    interaction.getUserIdx(),
+                    interaction.getIdx());
         }
     }
 }
-

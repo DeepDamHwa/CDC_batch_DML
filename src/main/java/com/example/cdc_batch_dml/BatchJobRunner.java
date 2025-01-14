@@ -20,7 +20,7 @@ public class BatchJobRunner implements CommandLineRunner {
         System.out.println("배치 작업 시작");
 
         try {
-            Job job = (Job) applicationContext.getBean("insertDataJob");
+            Job job = (Job) applicationContext.getBean("dataJob");
             System.out.println("배치 작업: " + job.getName());
 
             // JobParameters 생성

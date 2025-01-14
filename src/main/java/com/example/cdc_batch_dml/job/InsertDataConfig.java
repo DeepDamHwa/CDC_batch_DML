@@ -1,6 +1,10 @@
 package com.example.cdc_batch_dml.job;
 
 import com.example.cdc_batch_dml.entity.Interaction;
+import com.example.cdc_batch_dml.reader.InsertDataReader;
+import com.example.cdc_batch_dml.reader.UpdateDataReader;
+import com.example.cdc_batch_dml.writer.InsertDataWriter;
+import com.example.cdc_batch_dml.writer.UpdateDataWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -9,8 +13,6 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,14 +24,22 @@ public class InsertDataConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private final ItemReader<Interaction> reader;
+
+    private final InsertDataReader insertReader;
+    private final UpdateDataReader updateReader;
+
     private final ItemProcessor<Interaction, Interaction> processor;
-    private final ItemWriter<Interaction> writer;
+
+    private final InsertDataWriter insertWriter;
+    private final UpdateDataWriter updateWriter;
+
 
     @Bean
-    public Job insertDataJob() {
-        return new JobBuilder("insertDataJob", jobRepository)
+    public Job dataJob() {
+        return new JobBuilder("dataJob", jobRepository)
                 .start(insertDataStep())
+                .next(updateDataStep())
+//                .next(deleteDataStep())
                 .build();
     }
 
@@ -37,9 +47,29 @@ public class InsertDataConfig {
     public Step insertDataStep() {
         return new StepBuilder("insertDataStep", jobRepository)
                 .<Interaction, Interaction>chunk(10, transactionManager)
-                .reader(reader)
+                .reader(insertReader)
                 .processor(processor)
-                .writer(writer)
+                .writer(insertWriter)
                 .build();
     }
+
+    @Bean
+    public Step updateDataStep() {
+        return new StepBuilder("updateDataStep", jobRepository)
+                .<Interaction, Interaction>chunk(10, transactionManager)
+                .reader(updateReader)
+                .processor(processor)
+                .writer(updateWriter)
+                .build();
+    }
+
+//    @Bean
+//    public Step deleteDataStep() {
+//        return new StepBuilder("deleteDataStep", jobRepository)
+//                .<Interaction, Interaction>chunk(10, transactionManager)
+//                .reader(reader)
+//                .processor(processor)
+//                .writer(writer)
+//                .build();
+//    }
 }
