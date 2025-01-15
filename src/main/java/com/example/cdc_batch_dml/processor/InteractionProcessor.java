@@ -6,7 +6,7 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class InsertDataProcessor implements ItemProcessor<Interaction, Interaction> {
+public class InteractionProcessor implements ItemProcessor<Interaction, Interaction> {
 
     @Override
     public Interaction process(Interaction item) throws Exception {

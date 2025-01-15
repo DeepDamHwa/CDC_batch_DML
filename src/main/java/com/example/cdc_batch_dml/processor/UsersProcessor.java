@@ -5,7 +5,7 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class InsertUsersProcessor implements ItemProcessor<Users, Users> {
+public class UsersProcessor implements ItemProcessor<Users, Users> {
     @Override
     public Users process(Users item) throws Exception {
         return item;
