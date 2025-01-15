@@ -1,11 +1,14 @@
 package com.example.cdc_batch_dml.job;
 
 import com.example.cdc_batch_dml.entity.Interaction;
+import com.example.cdc_batch_dml.entity.Users;
 import com.example.cdc_batch_dml.reader.DeleteDataReader;
 import com.example.cdc_batch_dml.reader.InsertDataReader;
+import com.example.cdc_batch_dml.reader.InsertUsersReader;
 import com.example.cdc_batch_dml.reader.UpdateDataReader;
 import com.example.cdc_batch_dml.writer.DeleteDataWriter;
 import com.example.cdc_batch_dml.writer.InsertDataWriter;
+import com.example.cdc_batch_dml.writer.InsertUsersWriter;
 import com.example.cdc_batch_dml.writer.UpdateDataWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,15 +30,24 @@ public class InsertDataConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
 
+    // Interaction table
     private final InsertDataReader insertReader;
     private final UpdateDataReader updateReader;
     private final DeleteDataReader deleteReader;
 
-    private final ItemProcessor<Interaction, Interaction> processor;
+    // Users table
+    private final InsertUsersReader insertUsersReader;
 
+    private final ItemProcessor<Interaction, Interaction> interactionProcessor;
+    private final ItemProcessor<Users, Users> usersProcessor;
+
+    // Interaction table
     private final InsertDataWriter insertWriter;
     private final UpdateDataWriter updateWriter;
     private final DeleteDataWriter deleteWriter;
+
+    // Users table
+    private final InsertUsersWriter insertUsersWriter;
 
 
     @Bean
@@ -44,6 +56,7 @@ public class InsertDataConfig {
                 .start(insertDataStep())
                 .next(updateDataStep())
                 .next(deleteDataStep())
+                .next(insertUserStep())
                 .build();
     }
 
@@ -52,7 +65,7 @@ public class InsertDataConfig {
         return new StepBuilder("insertDataStep", jobRepository)
                 .<Interaction, Interaction>chunk(10, transactionManager)
                 .reader(insertReader)
-                .processor(processor)
+                .processor(interactionProcessor)
                 .writer(insertWriter)
                 .build();
     }
@@ -62,7 +75,7 @@ public class InsertDataConfig {
         return new StepBuilder("updateDataStep", jobRepository)
                 .<Interaction, Interaction>chunk(10, transactionManager)
                 .reader(updateReader)
-                .processor(processor)
+                .processor(interactionProcessor)
                 .writer(updateWriter)
                 .build();
     }
@@ -72,8 +85,18 @@ public class InsertDataConfig {
         return new StepBuilder("deleteDataStep", jobRepository)
                 .<Interaction, Interaction>chunk(10, transactionManager)
                 .reader(deleteReader)
-                .processor(processor)
+                .processor(interactionProcessor)
                 .writer(deleteWriter)
+                .build();
+    }
+
+    @Bean
+    public Step insertUserStep() {
+        return new StepBuilder("insertUserStep", jobRepository)
+                .<Users, Users>chunk(10, transactionManager)
+                .reader(insertUsersReader)
+                .processor(usersProcessor)
+                .writer(insertUsersWriter)
                 .build();
     }
 }

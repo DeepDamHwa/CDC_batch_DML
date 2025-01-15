@@ -10,7 +10,7 @@ public class InsertDataProcessor implements ItemProcessor<Interaction, Interacti
 
     @Override
     public Interaction process(Interaction item) throws Exception {
-        // Reader에서 중복제거 -> 그대로 전달
+        // 그대로 전달
         return item;
     }
 }
