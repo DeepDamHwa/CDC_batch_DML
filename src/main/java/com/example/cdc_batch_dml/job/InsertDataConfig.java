@@ -45,7 +45,7 @@ public class InsertDataConfig {
 
     private final InsertUsersWriter insertUsersWriter;
     private final UpdateUsersWriter updateUsersWriter;
-    private final DeleteUsersWriter deleteUsersWriter;
+//    private final DeleteUsersWriter deleteUsersWriter;
 
     // Post table
     private final InsertPostReader insertPostReader;
@@ -67,7 +67,7 @@ public class InsertDataConfig {
                 .next(deleteDataStep())
                 .next(insertUserStep())
                 .next(updateUserStep())
-                .next(deleteUserStep())
+//                .next(deleteUserStep())
                 .next(insertPostStep())
                 .next(updatePostStep())
                 .next(deletePostStep())
@@ -124,15 +124,15 @@ public class InsertDataConfig {
                 .build();
     }
 
-    @Bean
-    public Step deleteUserStep() {
-        return new StepBuilder("deleteUserStep", jobRepository)
-                .<Users, Users>chunk(10, transactionManager)
-                .reader(deleteUsersReader)
-                .processor(usersProcessor)
-                .writer(deleteUsersWriter)
-                .build();
-    }
+//    @Bean
+//    public Step deleteUserStep() {
+//        return new StepBuilder("deleteUserStep", jobRepository)
+//                .<Users, Users>chunk(10, transactionManager)
+//                .reader(deleteUsersReader)
+//                .processor(usersProcessor)
+//                .writer(deleteUsersWriter)
+//                .build();
+//    }
 
     @Bean
     public Step insertPostStep() {

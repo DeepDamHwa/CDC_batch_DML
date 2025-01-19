@@ -32,6 +32,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.batch:spring-batch-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // prometheus
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'io.prometheus:simpleclient_pushgateway'
 }
 
 tasks.named('test') {

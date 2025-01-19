@@ -37,7 +37,8 @@ public class DeletePostReader implements ItemReader<Post> {
     }
 
     private Long getIdx() {
-        String sql = "SELECT IDX FROM POST WHERE IDX NOT IN (SELECT POST_IDX FROM COMMENTS)";
+//        String sql = "SELECT IDX FROM POST WHERE IDX NOT IN (SELECT POST_IDX FROM COMMENTS)";
+        String sql = "SELECT P.IDX FROM POST P LEFT JOIN COMMENTS C ON P.IDX = C.POST_IDX WHERE C.POST_IDX IS NULL";
         List<Long> idxList = jdbcTemplate.queryForList(sql, Long.class);
 
         if (idxList.isEmpty()) {
